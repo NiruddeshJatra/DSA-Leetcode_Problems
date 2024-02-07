@@ -42,4 +42,4 @@ class Solution:
                 if j in prefixSum:
                     maxSum = max(maxSum, currSum - prefixSum[j])
 
-        return maxSum  # Return the maximum subarray sum.
+        return 0 if maxSum == -10**18 else maxSum  # Return the maximum subarray sum.
