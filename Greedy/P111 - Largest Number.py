@@ -24,6 +24,9 @@
 # 4. **Join and Return**:
 #    - Join the sorted numbers into a single string and return it as the result.
 
+# {{{ WHEN TWO STRINGS ARE COMPARED, THE ARE NOT COMPARED ACCORDING TO THE LENGTH, THEY ARE COMPARED LEXICOGRAPHICALLY.
+#    SO, 'AB' IS GREATER THAN 'AAC' AND 'AB' IS LESSER THAN 'D'. }}}
+
 class Solution:
     def largestNumber(self, nums: List[int]) -> str:
         # Step 1: Convert numbers to strings
