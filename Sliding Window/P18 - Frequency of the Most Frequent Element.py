@@ -1,39 +1,44 @@
+# Time Complexity: O(n log n), where n is the length of the input array `nums`.
+# The sorting operation takes O(n log n), and the sliding window traversal of the array takes O(n).
+
+# Space Complexity: O(1).
+# No additional space is used apart from a few variables.
+
+# INTUITION:
+# This problem revolves around maximizing the frequency of a single number in the array using at most `k` increments. 
+# By sorting the array, we focus on making consecutive smaller elements equal to the largest element in the current window.
+# The key idea is to calculate the `totalDifference` between the largest element in the window and all other elements in the window. 
+# If this `totalDifference` exceeds `k`, the window needs to shrink from the right. This ensures that the operations are within the allowed limit, making the solution optimal.
+
+# ALGO:
+# 1. Sort the array `nums` to simplify managing consecutive elements.
+# 2. Initialize variables:
+#    - `ans` to store the maximum frequency found.
+#    - `totalDifference` to track the sum of differences in the current window.
+#    - `i` to mark the right boundary of the current window.
+# 3. Traverse the array in reverse using `j` as the left boundary of the current window:
+#    - Add the difference between the largest element (`nums[i]`) and the current element (`nums[j]`) to `totalDifference`.
+#    - If `totalDifference` exceeds `k`, shrink the window by adjusting `i` and reducing `totalDifference`.
+# 4. Update the count of elements in the window (`cnt`) and calculate the maximum frequency (`ans`).
+# 5. Return `ans` after processing all elements.
+
+from typing import List
+
 class Solution:
     def maxFrequency(self, nums: List[int], k: int) -> int:
-        # Time Complexity: O(n*log(n)) - Sorting the array
-        # Space Complexity: O(1) - Constant space
-        
-        # INTUITION:
-        # This algorithm aims to find the maximum frequency of elements in the given list
-        # with the constraint that at most k operations are allowed to change the elements.
-        # It does so by maintaining a sliding window and adjusting it based on the given condition.
-        
-        # ALGORITHM:
-        # 1. Sort the input list 'nums'.
-        # 2. Initialize two pointers 'l' and 'r' to track the left and right ends of the window.
-        # 3. Initialize variables 'res' to store the maximum frequency and 'total' to store the sum of elements in the window.
-        # 4. Iterate through the elements using the right pointer 'r'.
-        #     - Update 'total' by adding the current element.
-        #     - While the current element multiplied by the length of the window is greater than 'total' plus 'k':
-        #         - Update 'total' by subtracting the leftmost element of the window.
-        #         - Move the left pointer 'l' to the right.
-        #     - Update 'res' by taking the maximum of 'res' and the length of the current window.
-        # 5. Return 'res' as the maximum frequency.
-        
-        nums.sort()  # Sorting the input list
-        
-        l, r = 0, 0  # Initializing pointers for the sliding window
-        res, total = 0, 0  # Initializing variables to track frequency and window sum
-        
-        while r < len(nums):
-            total += nums[r]  # Adding the current element to the window sum
-            
-            # Adjusting the window based on the given condition
-            while nums[r] * (r - l + 1) > total + k:
-                total -= nums[l]  # Removing the leftmost element from the window sum
-                l += 1  # Moving the left pointer to the right
-            
-            res = max(res, r - l + 1)  # Updating the maximum frequency
-            r += 1  # Moving the right pointer to the right
-        
-        return res  # Returning the maximum frequency
+        nums.sort()
+        maxFrequency, windowCount = 1, 1
+        totalDifference = 0
+        right = len(nums) - 1
+        for left in range(len(nums) - 2, -1, -1):
+            totalDifference += nums[right] - nums[left]
+
+            if right > 0 and totalDifference > k:
+                totalDifference -= (nums[right] - nums[right - 1]) * windowCount
+                right -= 1
+                windowCount -= 1
+
+            windowCount += 1
+            maxFrequency = max(maxFrequency, windowCount)
+
+        return maxFrequency
