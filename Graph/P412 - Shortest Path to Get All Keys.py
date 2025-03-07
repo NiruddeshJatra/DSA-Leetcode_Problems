@@ -27,61 +27,51 @@ from typing import List
 class Solution:
     def shortestPathAllKeys(self, grid: List[str]) -> int:
         m, n = len(grid), len(grid[0])
-        allKeys = [0] * 6
+        all_keys = [0] * 6
+        start = None
 
-        # Step 1: Find the start position and available keys
         for i in range(m):
             for j in range(n):
                 if grid[i][j] == '@':
-                    startRow, startCol = i, j
+                    start = (i, j)
                 elif grid[i][j].islower():
-                    allKeys[ord(grid[i][j]) - ord('a')] = 1
+                    all_keys[ord(grid[i][j]) - ord('a')] = 1
 
-        # Step 2: Convert the key list to a tuple (for hashable state tracking)
-        allKeys = tuple(allKeys)
-        curLevel = [(startRow, startCol, tuple([0] * 6))]
-        visited = {(startRow, startCol, tuple([0] * 6))}
-        dirs = [(0, 1), (0, -1), (1, 0), (-1, 0)] 
+        all_keys = tuple(all_keys)
+        if sum(all_keys) == 0:
+            return 0
+
+        from collections import deque
+        visited = set()
+        q = deque()
+        initial_keys = tuple([0] * 6)
+        q.append((start[0], start[1], initial_keys))
+        visited.add((start[0], start[1], initial_keys))
+        dirs = [(0, 1), (0, -1), (1, 0), (-1, 0)]
         moves = 0
 
-        # Step 3: Perform BFS
-        while curLevel:
-            nextLevel = []   
-            for x, y, curKeys in curLevel:
+        while q:
+            for _ in range(len(q)):
+                x, y, keys = q.popleft()
                 for dx, dy in dirs:
                     r, c = x + dx, y + dy
-
-                    # Step 4: Check valid positions
                     if 0 <= r < m and 0 <= c < n and grid[r][c] != '#':
-                        # 4.1: Empty cell or start position
-                        if grid[r][c] in '.@':
-                            if (r, c, curKeys) not in visited:
-                                visited.add((r, c, curKeys))
-                                nextLevel.append((r, c, curKeys))
-
-                        # 4.2: Found a key
-                        elif grid[r][c].islower():
-                            newKeys = list(curKeys)
-                            newKeys[ord(grid[r][c]) - ord('a')] = 1
-                            newKeys = tuple(newKeys)
-
-                            # Check if we collected all keys
-                            if newKeys == allKeys:
-                                return moves + 1
-
-                            if (r, c, newKeys) not in visited:
-                                visited.add((r, c, newKeys))
-                                nextLevel.append((r, c, newKeys))
-
-                        # 4.3: Found a door, check if we have the key
-                        else:
-                            if curKeys[ord(grid[r][c].lower()) - ord('a')] == 1 and (r, c, curKeys) not in visited:
-                                visited.add((r, c, curKeys))
-                                nextLevel.append((r, c, curKeys))
-
-            # Step 5: Update for next level and increment moves
-            curLevel = nextLevel           
+                        cell = grid[r][c]
+                        new_keys = list(keys)
+                        if cell.islower():
+                            idx = ord(cell) - ord('a')
+                            if new_keys[idx] == 0:
+                                new_keys[idx] = 1
+                        if cell.isupper():
+                            idx = ord(cell.lower()) - ord('a')
+                            if new_keys[idx] == 0:
+                                continue  # No key, can't pass
+                        new_keys_tup = tuple(new_keys)
+                        if (r, c, new_keys_tup) in visited:
+                            continue
+                        if new_keys_tup == all_keys:
+                            return moves + 1
+                        visited.add((r, c, new_keys_tup))
+                        q.append((r, c, new_keys_tup))
             moves += 1
-
-        # Step 6: No valid path to collect all keys
         return -1
