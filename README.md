@@ -1,6 +1,6 @@
 # Leetcode Solutions Repository
 
-Welcome to my Leetcode Solutions Repository! 🚀 This repository contains my solutions to various coding problems from Leetcode, organized by topic.
+Welcome to my Leetcode Solutions Repository! This repository contains my solutions to various coding problems from Leetcode, organized by topic.
 
 ## Table of Contents
 
@@ -45,4 +45,4 @@ To run a specific solution, make sure you have the necessary runtime environment
 
 
 
-Happy Coding! 🚀
+Happy Coding!
