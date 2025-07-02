@@ -9,6 +9,14 @@
 # and an additional `random` pointer that can point to any node in the list or be None.
 # Using a hashmap, we can map each node to its corresponding new node and handle both `next` 
 # and `random` pointers in a second pass.
+# Why do we need a second pass? Why not do everything in one pass?
+# Imagine you’re walking through the original list for the first time, and you see a node A. You create its copy A'.
+# Now suppose A has a random pointer to some node B — but you haven’t reached B yet in the list, so you haven’t created a copy B'. 
+# Therefore, in the first pass you can't assign A'.random = B' yet, because B' doesn’t exist.
+# That’s why we need:
+# - First pass: Create all the copied nodes and store them in a hashmap.
+# - Second pass: Set up the next and random pointers, using the hashmap (which now has all nodes copied).
+# So, the second pass is needed because the targets of random pointers might not have been processed yet during the first pass.
 
 # ALGO:
 # 1. Edge case: if the head is None, return None.
